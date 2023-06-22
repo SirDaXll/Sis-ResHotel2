@@ -52,6 +52,13 @@ class AgenciaTurismoInterfaz(QWidget):
         self.nombre = self.input_nombre.text()
         self.tipo = self.combo_excursion.currentText()
 
+        for i in self.nombre:
+            if i in '0123456789':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
+        
+        for i in self.nombre:
+            if i in '!"#$%&/()=?¡¿@,;.:-{[]^}<>¨´*+~':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
 
                 
         # Verificar si se ingresaron datos válidos
@@ -82,6 +89,14 @@ class AgenciaTurismoInterfaz(QWidget):
         archivo = 'sprint2-andres\\archivo_reservas.csv'
         self.nombre = self.input_nombre.text()
         self.tipo = self.combo_excursion.currentText()
+
+        for i in self.nombre:
+            if i in '0123456789':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
+        
+        for i in self.nombre:
+            if i in '!"#$%&/()=?¡¿@,;.:-{[]^}<>¨´*+~':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
             
         
         if self.nombre and self.tipo:
@@ -98,14 +113,21 @@ class AgenciaTurismoInterfaz(QWidget):
             QMessageBox.warning(self, "Error", "Por favor, complete el nombre y seleccione una excursión.")
     
     def eliminar_reserva(self):
-        QMessageBox.information(self, "Reserva Eliminada", "Reserva eliminada exitosamente.")
+        
         
         archivo = 'sprint2-andres\\archivo_reservas.csv'
         nombre_reserva = self.input_nombre.text()
         excursion = self.combo_excursion.currentText()
 
         linea_reserva = self.encontrar_elemento_archivo(archivo, nombre_reserva, excursion)
-        self.eliminar_linea_archivo(archivo, linea_reserva)
+
+
+        if linea_reserva == None:
+            QMessageBox.warning(self, "Error", "Esa persona no tiene una reserva con esas características.")
+            
+        else:
+            self.eliminar_linea_archivo(archivo, linea_reserva)
+            QMessageBox.information(self, "Reserva Eliminada", "Reserva eliminada exitosamente.")
 
         self.mi_signal.emit()
 
@@ -139,9 +161,7 @@ class AgenciaTurismoInterfaz(QWidget):
 
                 if elemento1 in linea and elemento2 in linea:
                     return linea_actual
-        print(elemento1)
-        print(elemento2)
-        print(linea_actual)
+        
         return None
     
     def modificar_linea(self, archivo, linea_index, nueva_linea):

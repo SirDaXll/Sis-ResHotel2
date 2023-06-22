@@ -53,6 +53,15 @@ class RestauranteInterfaz(QWidget):
     def reservar_plan(self):
         self.nombre = self.input_nombre.text()
         self.tipo = self.combo_plan.currentText()
+
+        for i in self.nombre:
+            if i in '0123456789':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
+        
+        for i in self.nombre:
+            if i in '!"#$%&/()=?¡¿@,;.:-{[]^}<>¨´*+~':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
+
             
         
         if self.nombre and self.tipo:
@@ -81,6 +90,15 @@ class RestauranteInterfaz(QWidget):
         self.nombre = self.input_nombre.text()
         self.tipo = self.combo_plan.currentText()
 
+        for i in self.nombre:
+            if i in '0123456789':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
+        
+        for i in self.nombre:
+            if i in '!"#$%&/()=?¡¿@,;.:-{[]^}<>¨´*+~':
+                return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
+
+
         if self.nombre and self.tipo:
 
             num_linea_reserva = self.encontrar_elemento_archivo(archivo, self.nombre, None)
@@ -96,14 +114,19 @@ class RestauranteInterfaz(QWidget):
 
 
     def eliminar_reserva(self):
-        QMessageBox.information(self, "Reserva Eliminada", "Reserva eliminada exitosamente.")
+        
         archivo = 'sprint2-andres\\archivo_reservas.csv'
 
         nombre_reserva = self.input_nombre.text()
         tipo = self.combo_plan.currentText()
 
         linea_reserva = self.encontrar_elemento_archivo(archivo, nombre_reserva, tipo)
-        self.eliminar_linea_archivo(archivo, linea_reserva)
+        
+        if linea_reserva == None:
+            QMessageBox.warning(self, "Error", "Esa persona no tiene una reserva con esas características.")
+        else:
+            self.eliminar_linea_archivo(archivo, linea_reserva)
+            QMessageBox.information(self, "Reserva Eliminada", "Reserva eliminada exitosamente.")
 
         self.mi_signal.emit()
 
