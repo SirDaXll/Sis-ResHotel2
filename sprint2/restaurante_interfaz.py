@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QComboBox, QPushButton, QLineEdit, QMessageBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QComboBox, QPushButton, QLineEdit, QMessageBox
 
 class RestauranteInterfaz(QWidget):
     def __init__(self):
@@ -42,14 +42,20 @@ class RestauranteInterfaz(QWidget):
     def reservar_plan(self):
         nombre = self.input_nombre.text()
         plan = self.combo_plan.currentText()
+
+        for i in nombre:
+            if i in '0123456789' or i in '!"#$%&/()=?¡¿@,;.:-_{[]^}<>¨´*+~':
+                None
+            return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.")
+            
         
-        if nombre and plan:
+        for i in nombre:
+            if i not in '0123456789' or nombre == '':
+                None
             mensaje = f"Plan de Comida Reservado:\n\nNombre: {nombre}\nPlan: {plan}"
             QMessageBox.information(self, "Reserva Exitosa", mensaje)
             
-            self.input_nombre.clear()
-        else:
-            QMessageBox.warning(self, "Error", "Por favor, complete el nombre y seleccione un plan de comida.")
+        self.input_nombre.clear()
     
     def actualizar_reserva(self):
         QMessageBox.information(self, "Reserva Actualizada", "Reserva actualizada exitosamente.")

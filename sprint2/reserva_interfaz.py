@@ -42,14 +42,20 @@ class ReservaInterfaz(QWidget):
     def realizar_reserva(self):
         nombre = self.input_nombre.text()
         habitacion = self.combo_habitacion.currentText()
-        
-        if nombre and habitacion:
-            mensaje = f"Reserva Realizada:\n\nNombre: {nombre}\nHabitación: {habitacion}"
-            QMessageBox.information(self, "Reserva Exitosa", mensaje)
+
+        for i in nombre:
+            if i in '0123456789' or i in '!"#$%&/()=?¡¿@,;.:-_{[]^}<>¨´*+~':
+                None
+            return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.")
             
-            self.input_nombre.clear()
-        else:
-            QMessageBox.warning(self, "Error", "Por favor, complete el nombre y seleccione una habitación.")
+        
+        for i in nombre:
+            if i not in '0123456789' or nombre == '':
+                None
+            mensaje = f"Reserva Realizada:\n\nNombre: {nombre}\nHabitación: {habitacion}"
+            return QMessageBox.information(self, "Reserva Exitosa", mensaje)
+
+        self.input_nombre.clear()
     
     def actualizar_reserva(self):
         QMessageBox.information(self, "Reserva Actualizada", "Reserva actualizada exitosamente.")
