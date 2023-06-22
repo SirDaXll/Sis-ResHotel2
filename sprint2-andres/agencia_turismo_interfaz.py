@@ -11,8 +11,7 @@ class AgenciaTurismoInterfaz(QWidget):
 
         self.nombre = None
         self.seccion = 'Agencia de Turismo'
-        self.excursion = None
-
+        self.tipo = None
 
         self.setWindowTitle("Agencia de Turismo")
         self.setup_ui()
@@ -51,12 +50,13 @@ class AgenciaTurismoInterfaz(QWidget):
     def agregar_reserva_excursion(self):
         # Obtener el nombre y la excursión seleccionada
         self.nombre = self.input_nombre.text()
-        self.excursion = self.combo_excursion.currentText()
+        self.tipo = self.combo_excursion.currentText()
+
 
                 
         # Verificar si se ingresaron datos válidos
-        if self.nombre and self.excursion:
-            mensaje = f"Excursión Reservada:\n\nNombre: {self.nombre}\nExcursión: {self.excursion}"
+        if self.nombre and self.tipo:
+            mensaje = f"Excursión Reservada:\n\nNombre: {self.nombre}\nExcursión: {self.tipo}"
             QMessageBox.information(self, "Reserva Exitosa", mensaje)
             
             # Limpiar el campo de nombre después de la reserva exitosa
@@ -65,7 +65,7 @@ class AgenciaTurismoInterfaz(QWidget):
             #agregar los datos de la reserva al archivo csv
             try:
                 texto_csv = open('sprint2-andres\\archivo_reservas.csv', 'a')
-                texto_csv.write(f"'{self.nombre}','Agencia de Turismo', '{self.excursion}'\n")
+                texto_csv.write(f"'{self.nombre}','Agencia de Turismo', '{self.tipo}'\n")
                 texto_csv.close()
             except Exception as e:
                 print(f'El archivo no se encuentra ... {e}')
@@ -78,16 +78,24 @@ class AgenciaTurismoInterfaz(QWidget):
         
 
     def actualizar_reserva(self):
-        QMessageBox.information(self, "Reserva Actualizada", "Reserva actualizada exitosamente.")
         
         archivo = 'sprint2-andres\\archivo_reservas.csv'
-        nombre_reserva = self.input_nombre.text()
-        excursion = self.combo_excursion.currentText()
-        num_linea_reserva = self.encontrar_elemento_archivo(archivo, nombre_reserva, excursion)
-        nueva_linea = f"'{nombre_reserva}', 'Agencia de Turismo'"
-        self.modificar_linea(num_linea_reserva, nueva_linea)
+        self.nombre = self.input_nombre.text()
+        self.tipo = self.combo_excursion.currentText()
+            
+        
+        if self.nombre and self.tipo:
 
-        self.input_nombre.clear()
+            num_linea_reserva = self.encontrar_elemento_archivo(archivo, self.nombre, None)
+            nueva_linea = f"'{self.nombre}', 'Agencia de Turismo', '{self.tipo}'"
+            self.modificar_linea(archivo, num_linea_reserva, nueva_linea)
+
+            self.mi_signal.emit()
+            self.input_nombre.clear()
+            QMessageBox.information(self, "Reserva Actualizada", "Reserva actualizada exitosamente.")
+                
+        else:
+            QMessageBox.warning(self, "Error", "Por favor, complete el nombre y seleccione una excursión.")
     
     def eliminar_reserva(self):
         QMessageBox.information(self, "Reserva Eliminada", "Reserva eliminada exitosamente.")
@@ -108,6 +116,7 @@ class AgenciaTurismoInterfaz(QWidget):
 
         # Verifica que el número de línea sea válido
         if numero_linea < 1 or numero_linea > len(lineas):
+            print(numero_linea)
             print("Número de línea inválido")
             return
 
@@ -118,22 +127,30 @@ class AgenciaTurismoInterfaz(QWidget):
             archivo_destino.writelines(lineas)
     
     def encontrar_elemento_archivo(self, archivo, elemento1, elemento2):
+
         with open(archivo, 'r') as archivo_origen:
             linea_actual = 0
 
             for linea in archivo_origen:
                 linea_actual += 1
-                if elemento1 in linea and elemento2 in linea:
+
+                if elemento1 in linea and elemento2 == None:
                     return linea_actual
 
+                if elemento1 in linea and elemento2 in linea:
+                    return linea_actual
+        print(elemento1)
+        print(elemento2)
+        print(linea_actual)
         return None
     
     def modificar_linea(self, archivo, linea_index, nueva_linea):
         with open(archivo, 'r') as file:
             lineas = file.readlines()
-
+        
+        linea_index -= 1
         if linea_index < 0 or linea_index >= len(lineas):
-            print("Índice de línea inválido")
+            print("Índice de línea inválido", linea_index, len(lineas))
             return
 
         lineas[linea_index] = nueva_linea + '\n'

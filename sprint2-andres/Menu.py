@@ -57,13 +57,15 @@ class MainWindow(QMainWindow):
     
     def reserva(self):
         self.reserva_interface = ReservaInterfaz()
+        self.reserva_interface.mi_signal.connect(self.agregar_reserva_tabla_reserva)
+        self.reserva_interface.mi_signal.connect(self.cargar_datos)
+
         # Muestra la interfaz de reserva
         self.reserva_interface.show()
     
     def agencia_turismo(self):
         self.agencia_turismo_interface = AgenciaTurismoInterfaz()
-
-        self.agencia_turismo_interface.mi_signal.connect(self.agregar_reserva_tabla)
+        self.agencia_turismo_interface.mi_signal.connect(self.agregar_reserva_tabla_turismo)
         self.agencia_turismo_interface.mi_signal.connect(self.cargar_datos)
 
         # Muestra la interfaz de la agencia de turismo
@@ -71,16 +73,48 @@ class MainWindow(QMainWindow):
     
     def restaurante(self):
         self.restaurante_interface = RestauranteInterfaz()
+        self.restaurante_interface.mi_signal.connect(self.agregar_reserva_tabla_restaurante)
+        self.restaurante_interface.mi_signal.connect(self.cargar_datos)
         # Muestra la interfaz del restaurante
         self.restaurante_interface.show()
 
-    def agregar_reserva_tabla(self):
+    def agregar_reserva_tabla_turismo(self):
 
         nombre_item = QTableWidgetItem(self.agencia_turismo_interface.nombre)
         nombre_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         seccion_reserva_item = QTableWidgetItem(self.agencia_turismo_interface.seccion)
         seccion_reserva_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
         reserva_item = QTableWidgetItem(self.agencia_turismo_interface.excursion)
+        reserva_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+
+        row_count = self.table.rowCount()
+        self.table.insertRow(row_count)
+        self.table.setItem(row_count, 0, nombre_item)
+        self.table.setItem(row_count, 1, seccion_reserva_item)
+        self.table.setItem(row_count, 2, reserva_item)
+
+    def agregar_reserva_tabla_reserva(self):
+
+        nombre_item = QTableWidgetItem(self.reserva_interface.nombre)
+        nombre_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+        seccion_reserva_item = QTableWidgetItem(self.reserva_interface.seccion)
+        seccion_reserva_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+        reserva_item = QTableWidgetItem(self.reserva_interface.tipo)
+        reserva_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+
+        row_count = self.table.rowCount()
+        self.table.insertRow(row_count)
+        self.table.setItem(row_count, 0, nombre_item)
+        self.table.setItem(row_count, 1, seccion_reserva_item)
+        self.table.setItem(row_count, 2, reserva_item)
+
+    def agregar_reserva_tabla_restaurante(self):
+
+        nombre_item = QTableWidgetItem(self.restaurante_interface.nombre)
+        nombre_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+        seccion_reserva_item = QTableWidgetItem(self.restaurante_interface.seccion)
+        seccion_reserva_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+        reserva_item = QTableWidgetItem(self.restaurante_interface.tipo)
         reserva_item.setFlags(nombre_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
 
         row_count = self.table.rowCount()
