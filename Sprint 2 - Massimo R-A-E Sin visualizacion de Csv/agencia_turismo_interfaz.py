@@ -1,10 +1,10 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QMessageBox
 import csv
 
-class ReservaInterfaz(QWidget):
+class AgenciaTurismoInterfaz(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Reserva")
+        self.setWindowTitle("Agencia de Turismo")
         
         self.setup_ui()
     
@@ -16,18 +16,17 @@ class ReservaInterfaz(QWidget):
         layout.addWidget(label_nombre)
         layout.addWidget(self.input_nombre)
         
-        label_habitacion = QLabel("Seleccione una Habitación:")
-        self.combo_habitacion = QComboBox()
-        self.combo_habitacion.addItem("Ejecutiva Individual")
-        self.combo_habitacion.addItem("Ejecutiva Doble")
-        self.combo_habitacion.addItem("Familiar")
-        self.combo_habitacion.addItem("PentHouse Volcanes")
-        self.combo_habitacion.addItem("PentHouse Pacífico")
-        layout.addWidget(label_habitacion)
-        layout.addWidget(self.combo_habitacion)
+        label_excursion = QLabel("Seleccione una Excursión:")
+        self.combo_excursion = QComboBox()
+        self.combo_excursion.addItem("Tour por la Ciudad")
+        self.combo_excursion.addItem("Senderismo en el Bosque")
+        self.combo_excursion.addItem("Visita a las Playas")
+        self.combo_excursion.addItem("Tour de Aventura")
+        layout.addWidget(label_excursion)
+        layout.addWidget(self.combo_excursion)
         
-        button_reservar = QPushButton("Realizar Reserva")
-        button_reservar.clicked.connect(self.realizar_reserva)
+        button_reservar = QPushButton("Reservar Excursión")
+        button_reservar.clicked.connect(self.reservar_excursion)
         layout.addWidget(button_reservar)
 
         button_actualizar = QPushButton("Actualizar Reserva")
@@ -40,9 +39,9 @@ class ReservaInterfaz(QWidget):
         
         self.setLayout(layout)
     
-    def realizar_reserva(self):
+    def reservar_excursion(self):
         nombre = self.input_nombre.text()
-        habitacion = self.combo_habitacion.currentText()
+        excursion = self.combo_excursion.currentText()
 
         for i in nombre:
             if i in '0123456789':
@@ -53,7 +52,7 @@ class ReservaInterfaz(QWidget):
                 return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
         
         lista_nombres= []
-        texto_csv = open('personas_reservas.csv', 'r')
+        texto_csv = open('agencia_reservas.csv', 'r')
         lineas = texto_csv.readlines()
         for linea in lineas:
             dato = linea.split(",")
@@ -65,22 +64,21 @@ class ReservaInterfaz(QWidget):
             return QMessageBox.warning(self, "Error", "Nombre repetido, ingrese un nombre valido.") and self.input_nombre.clear()
             
         else:
-            csv_lista = [nombre,habitacion]
+            csv_lista = [nombre,excursion]
             print(csv_lista)
 
-            with open('personas_reservas.csv', 'a', newline="") as csvfile:
+            with open('agencia_reservas.csv', 'a', newline="") as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(csv_lista)
 
-            mensaje = f"Reserva Realizada:\n\nNombre: {nombre}\nHabitación: {habitacion}"
+            mensaje = f"Reserva Realizada:\n\nNombre: {nombre}\nExcursión: {excursion}"
             QMessageBox.information(self, "Reserva Exitosa", mensaje)
 
         self.input_nombre.clear()
-        
     
     def actualizar_reserva(self):
         nombre = self.input_nombre.text()
-        habitacion = self.combo_habitacion.currentText()
+        excursion = self.combo_excursion.currentText()
 
         for i in nombre:
             if i in '0123456789':
@@ -91,7 +89,7 @@ class ReservaInterfaz(QWidget):
                 return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
 
         lista_nombres= []
-        texto_csv = open('personas_reservas.csv', 'r')
+        texto_csv = open('agencia_reservas.csv', 'r')
         lineas = texto_csv.readlines()
         for linea in lineas:
             dato = linea.split(",")
@@ -103,40 +101,35 @@ class ReservaInterfaz(QWidget):
             return QMessageBox.warning(self, "Error", "Nombre no encontrado.") and self.input_nombre.clear()
             
         if nombre in lista_nombres:
-            texto_csv = open('personas_reservas.csv', 'r')
+            texto_csv = open('agencia_reservas.csv', 'r')
             lineas = texto_csv.readlines()
-            with open('personas_reservas.csv', 'w', newline="") as csvfile:
+            with open('agencia_reservas.csv', 'w', newline="") as csvfile:
                         writer = csv.writer(csvfile)
-                        writer.writerow("")
+                        writer.writerow("Nombre;Excursion")
             for linea in lineas:
                 separar = linea.split(",")
                 separar1 = separar[1].split("\n")
                 nombre1 = str(separar[0])
-                habitacion1 = str(separar1[0])
-                csv_personas = [nombre1,habitacion1]
+                excursion1 = str(separar1[0])
+                csv_personas = [nombre1,excursion1]
                 if separar[0] != nombre:
-                    with open('personas_reservas.csv', 'a', newline="") as csvfile:
+                    with open('agencia_reservas.csv', 'a', newline="") as csvfile:
                         writer = csv.writer(csvfile)
                         writer.writerow(csv_personas)
 
-            csv_lista = [nombre,habitacion]
+            csv_lista = [nombre,excursion]
 
-            with open('personas_reservas.csv', 'a', newline="") as csvfile:
+            with open('agencia_reservas.csv', 'a', newline="") as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(csv_lista)
-                mensaje = f"Nombre: {nombre}\nHabitación: {habitacion}\n\nReserva actualizada exitosamente."
+                mensaje = f"Nombre: {nombre}\nExcursión: {excursion}\n\nReserva actualizada exitosamente."
                 QMessageBox.information(self, "Reserva Actualizada:", mensaje )
 
         self.input_nombre.clear()
-                    
     
     def eliminar_reserva(self):
         nombre = self.input_nombre.text()
-        habitacion = self.combo_habitacion.currentText()
-
-        nombre = self.input_nombre.text()
-        habitacion = self.combo_habitacion.currentText()
-
+        
         for i in nombre:
             if i in '0123456789':
                 return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
@@ -146,7 +139,7 @@ class ReservaInterfaz(QWidget):
                 return QMessageBox.warning(self, "Error", "Por favor, ingrese un dato valido.") and self.input_nombre.clear()
 
         lista_nombres= []
-        texto_csv = open('personas_reservas.csv', 'r')
+        texto_csv = open('agencia_reservas.csv', 'r')
         lineas = texto_csv.readlines()
         for linea in lineas:
             dato = linea.split(",")
@@ -158,11 +151,11 @@ class ReservaInterfaz(QWidget):
             return QMessageBox.warning(self, "Error", "Nombre no encontrado.") and self.input_nombre.clear()
             
         if nombre in lista_nombres:
-            texto_csv = open('personas_reservas.csv', 'r')
+            texto_csv = open('agencia_reservas.csv', 'r')
             lineas = texto_csv.readlines()
-            with open('personas_reservas.csv', 'w', newline="") as csvfile:
+            with open('agencia_reservas.csv', 'w', newline="") as csvfile:
                         writer = csv.writer(csvfile)
-                        writer.writerow("")
+                        writer.writerow("Nombre;Excursion")
             for linea in lineas:
                 separar = linea.split(",")
                 if len(separar)<2:
@@ -170,10 +163,10 @@ class ReservaInterfaz(QWidget):
                 else:
                     separar1 = separar[1].split("\n")
                     nombre1 = str(separar[0])
-                    habitacion1 = str(separar1[0])
-                    csv_personas = [nombre1,habitacion1]
+                    excursion1 = str(separar1[0])
+                    csv_personas = [nombre1,excursion1]
                     if separar[0] != nombre:
-                        with open('personas_reservas.csv', 'a', newline="") as csvfile:
+                        with open('agencia_reservas.csv', 'a', newline="") as csvfile:
                             writer = csv.writer(csvfile)
                             writer.writerow(csv_personas)
 

@@ -4,12 +4,8 @@ from PyQt6.QtGui import QAction
 from reserva_interfaz import ReservaInterfaz
 from agencia_turismo_interfaz import AgenciaTurismoInterfaz
 from restaurante_interfaz import RestauranteInterfaz
+import pandas
 
-# - Integrantes -
-# Miguel Valladares
-# Ignacio Soto
-# Bryan Soto
-# Benjamin Miranda
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -39,12 +35,18 @@ class MainWindow(QMainWindow):
         
         action_restaurante = QAction("Hacer Pedido", self)
         action_restaurante.triggered.connect(self.restaurante)
-        menu_restaurante.addAction(action_restaurante)
-    
+        menu_restaurante.addAction(action_restaurante)  
+
     def reserva(self):
         self.reserva_interface = ReservaInterfaz()
         # Muestra la interfaz de reserva
         self.reserva_interface.show()
+
+        filename = 'personas_reservas.csv'
+        data = pandas.read_csv(filename, header=0)
+
+        print(data.shape)
+        print (data.head(10))
     
     def agencia_turismo(self):
         self.agencia_turismo_interface = AgenciaTurismoInterfaz()
